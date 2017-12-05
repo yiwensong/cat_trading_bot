@@ -8,18 +8,24 @@ BUY_PRICE = .1;
 
 function buy_cat(cat_number) {
   // Make this work
+  console.log(cat_number);
   var buyURL = "/kitty/" + cat_number + "/buy";
-  var win = window.open(buyURL);
-  var script = win.document.createElement('script');
-  script.src = "https://code.jquery.com/jquery-3.2.1.min.js";
-  win.document.head.appendChild(script);
-  win.$("button.Button.Button--larger.Button--buy")[0].click();  
-  console.log(buyURL);
+  var win = window.open(buyURL, cat_number, '_blank');
+  /*
+  $(win).ready(function() {
+    var script = win.document.createElement('script');
+    script.src = "https://code.jquery.com/jquery-3.2.1.min.js";
+    win.document.head.appendChild(script);
+  });
+  */
+  // win.$("button.Button.Button--larger.Button--buy")[0].click();  
+  return win;
 };
 
 
 var cards = $(".KittyCard-wrapper")
 var subnames = $(".KittyCard-subname")
+windows = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 for (var i=0;i<cards.length;i++) {
   var regex1 = />\d+.\d+</.exec(cards[i].innerHTML);
   var regex2 = /\d+.\d+/.exec(regex1[0]);
@@ -27,6 +33,10 @@ for (var i=0;i<cards.length;i++) {
   if (price < BUY_PRICE) {
     var regex3 = /\d+/.exec(subnames[i].innerHTML);
     var cat_number = parseInt(regex3[0]);
-    buy_cat(cat_number);
+    windows[i] = buy_cat(cat_number);
   }
+}
+
+for (var i=0;i<cards.length;i++) {
+  windows[i].$("button.Button.Button--larger.Button--buy")[0].click();
 }
