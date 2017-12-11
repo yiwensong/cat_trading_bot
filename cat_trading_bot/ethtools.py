@@ -1,7 +1,10 @@
+from cat_trading_bot.exceptions import InsufficientFundsException
+from cat_trading_bot.exceptions import KittyNotOwnedException
+from cat_trading_bot.exceptions import KittyNotListedException
 from ethereum import utils
 from ethereum.transactions import Transaction
-import web3
 import os
+import web3
 
 CRYPTOKITTIES_CONTRACT_ADDR = 0xb1690C08E213a35Ed9bAb7B318DE14420FB57d8C
 
