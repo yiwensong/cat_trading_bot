@@ -69,7 +69,9 @@ class CatWallet():
     
     def cancel_sire(self, kitty_id, **kwargs):
         """Cancels a siring listing."""
-        pass
+        cats_contract = get_cats_contract('sire')
+        contract_args = kwargs
+        return cats_contract.transact(contract_args).cancelAuction(kitty_id)
     
     
     def purchase_sire(self, kitty_id, sire_id, **kwargs):
