@@ -37,7 +37,7 @@ def get_cats_contract(contract_type):
     )
     return cats_contract
 
-class EthWallet():
+class CatWallet():
     def __init__(self, key=None):
         if not key:
             key = generate_key()
@@ -57,7 +57,14 @@ class EthWallet():
     
     def list_sire(self, kitty_id, start_amt, end_amt, duration, **kwargs):
         """Lists a cat to sire."""
-        pass
+        cats_contract = get_cats_contract('core')
+        contract_args = kwargs
+        cats_contract.transact(contract_args).createSiringAuction(
+            kitty_id,
+            web3.toWei(start_amt, 'ether'),
+            web3.toWei(end_amt, 'ether'),
+            duration,
+        )
     
     
     def cancel_sire(self, kitty_id, **kwargs):
@@ -68,6 +75,16 @@ class EthWallet():
     def purchase_sire(self, kitty_id, sire_id, **kwargs):
         """Makes your cat fuck the other cat."""
         pass
+    
+    
+    def give_birth(self, kitty_id, amt, **kwargs):
+        """Makes your kitty give birth."""
+        cats_contract = get_cats_contract('core')
+        contract_args = kwargs
+        contract_args.update('value': web3.toWei(amt, 'ether'))
+        cats_contract.transact(contract_args).giveBirth(
+            kitty_id,
+        )
     
     
     def list_kitty(self, kitty_id, start_amt, end_amt, duration, **kwargs):
