@@ -38,14 +38,15 @@ def get_cats_contract(contract_type):
     return cats_contract
 
 class CatWallet():
-    def __init__(self, key=None):
+    def __init__(self, addr=None, key=None):
         if not key:
-            key = generate_key()
+            key = os.urandom(4096)
+        if not addr:
+            addr = web3.personal.newAccount(key)
+        self.addr = addr
         self.key = key
-        self.raw_addr = utils.privtoaddr(private_key)
-        self.acct_addr = utils.checksum_encode(raw_address)
         
-    def send_eth(self, address, amt, data=None):
+    def send_eth(self, address, amt, data=None, **kwargs):
         """Sends `amt` ethereum to `address` with the `data`
         field attached to it.
         
@@ -125,8 +126,3 @@ class CatWallet():
         contract_args = kwargs
         contract_args.update({'value': web3.toWei(amt, 'ether')})
         return cats_contract.transact(contract_args).bid(kitty_id)
-
-
-def generate_key():
-    private_key = utils.sha3(os.urandom(4096))
-    return private_key
