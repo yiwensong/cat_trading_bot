@@ -74,6 +74,13 @@ class EthWallet():
         `KittyNotOwnedException`.
         """
         cats_contract = get_cats_contract('core')
+        contract_args = kwargs
+        cats_contract.transact(contract_args).createSaleAuction(
+            kitty_id,
+            web3.toWei(start_amt, 'ether'),
+            web3.toWei(end_amt, 'ether'),
+            duration,
+        )
         
         
     def cancel_list(self, kitty_id, **kwargs):
