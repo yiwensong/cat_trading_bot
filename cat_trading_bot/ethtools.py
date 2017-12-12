@@ -1,6 +1,6 @@
 from cat_trading_bot.exceptions import InsufficientFundsException
 from cat_trading_bot.exceptions import KittyNotOwnedException
-from cat_trading_bot.cats_abi import CATS_ABI
+from cat_trading_bot.cats_abi import SALE_ABI, CORE_ABI, SIRE_ABI
 from ethereum import utils
 from ethereum.transactions import Transaction
 import os
@@ -12,24 +12,28 @@ CAT_CONTRACTS = {
     'sale': {
         'name': 'CryptoKittiesSalesAuction',
         'addr': '0xb1690C08E213a35Ed9bAb7B318DE14420FB57d8C',
+        'abi': SALE_ABI,
     },
     'core': {
         'name': 'CryptoKittiesCore',
         'addr': '0x06012c8cf97bead5deae237070f9587f8e7a266d',
+        'abi': CORE_ABI,
     },
     'sire': {
         'name': 'CryptoKittiesSiringAuction',
         'addr': '0xC7af99Fe5513eB6710e6D5f44F9989dA40F27F26',
+        'abi': SIRE_ABI,
     }
 }
 
 def get_cats_contract(contract_type):
     name = CAT_CONTRACTS[contract_type]['name']
     address = CAT_CONTRACTS[contract_type]['addr']
+    abi = CAT_CONTRACTS[contract_type]['abi']
     cats_contract = web3.eth.contract(
         address=address,
         name=name,
-        abi=CATS_ABI,
+        abi=abi,
     )
     return cats_contract
 
