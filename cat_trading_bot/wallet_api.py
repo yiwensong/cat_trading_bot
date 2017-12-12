@@ -42,7 +42,7 @@ class CatWallet():
         if not key:
             key = os.urandom(4096)
         if not addr:
-            addr = web3.personal.newAccount(key)
+            addr = web3.personal.importRawKey(key)
         self.addr = addr
         self.key = key
         
@@ -54,7 +54,14 @@ class CatWallet():
         If you do not have enough ethereum, raises 
         `InsufficientFundsException`.
         """
-        pass
+        transaction = {
+            'from': self.addr,
+            'to': address,
+            'value': web3.toWei(amt, 'ether'),
+            'data': data,
+        }
+        transaction.update(kwargs)
+        return web3.eth.sendTransaction(transaction)
     
     
     def list_sire(self, kitty_id, start_amt, end_amt, duration, **kwargs):
@@ -78,9 +85,16 @@ class CatWallet():
         return cats_contract.transact(contract_args).cancelAuction(kitty_id)
     
     
-    def purchase_sire(self, kitty_id, sire_id, **kwargs):
+    def purchase_sire(self, kitty_id, sire_id, amt, **kwargs):
         """Makes your cat fuck the other cat."""
-        pass
+        cats_contract = get_cats_contract('core')
+        contract_args = kwargs
+        contract_args.update({'from': self.addr})
+        contract_args.update({'value': web3.toWei(amt, 'ether')})
+        return cats_contract.transact(contract_args).bidOnSiringAuction(
+            sire_id,
+            kitty_id,
+        )
     
     
     def give_birth(self, kitty_id, amt, **kwargs):
