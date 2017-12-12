@@ -59,7 +59,7 @@ class CatWallet():
         """Lists a cat to sire."""
         cats_contract = get_cats_contract('core')
         contract_args = kwargs
-        cats_contract.transact(contract_args).createSiringAuction(
+        return cats_contract.transact(contract_args).createSiringAuction(
             kitty_id,
             web3.toWei(start_amt, 'ether'),
             web3.toWei(end_amt, 'ether'),
@@ -82,7 +82,7 @@ class CatWallet():
         cats_contract = get_cats_contract('core')
         contract_args = kwargs
         contract_args.update('value': web3.toWei(amt, 'ether'))
-        cats_contract.transact(contract_args).giveBirth(
+        return cats_contract.transact(contract_args).giveBirth(
             kitty_id,
         )
     
@@ -96,7 +96,7 @@ class CatWallet():
         """
         cats_contract = get_cats_contract('core')
         contract_args = kwargs
-        cats_contract.transact(contract_args).createSaleAuction(
+        return cats_contract.transact(contract_args).createSaleAuction(
             kitty_id,
             web3.toWei(start_amt, 'ether'),
             web3.toWei(end_amt, 'ether'),
@@ -108,7 +108,7 @@ class CatWallet():
         """Cancels the listing for the cat."""
         cats_contract = get_cats_contract('sale')
         contract_args = kwargs
-        cats_contract.transact(contract_args).cancelAuction(kitty_id)
+        return cats_contract.transact(contract_args).cancelAuction(kitty_id)
         
     
     def buy_kitty(self, kitty_id, amt, **kwargs):
@@ -122,7 +122,7 @@ class CatWallet():
         cats_contract = get_cats_contract('sale')
         contract_args = kwargs
         contract_args.update({'value': web3.toWei(amt, 'ether')})
-        cats_contract.transact(contract_args).bid(kitty_id)
+        return cats_contract.transact(contract_args).bid(kitty_id)
 
 
 def generate_key():
