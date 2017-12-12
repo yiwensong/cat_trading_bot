@@ -1,13 +1,37 @@
 from cat_trading_bot.exceptions import InsufficientFundsException
 from cat_trading_bot.exceptions import KittyNotOwnedException
-from cat_trading_bot.exceptions import KittyNotListedException
+from cat_trading_bot.cats_abi import CATS_ABI
 from ethereum import utils
 from ethereum.transactions import Transaction
 import os
 import web3
 
-CRYPTOKITTIES_CONTRACT_ADDR = 0xb1690C08E213a35Ed9bAb7B318DE14420FB57d8C
 
+# CryptoKitty Contract addresses
+CAT_CONTRACTS = {
+    'sale': {
+        'name': 'CryptoKittiesSalesAuction',
+        'addr': '0xb1690C08E213a35Ed9bAb7B318DE14420FB57d8C',
+    },
+    'core': {
+        'name': 'CryptoKittiesCore',
+        'addr': '0x06012c8cf97bead5deae237070f9587f8e7a266d',
+    },
+    'sire': {
+        'name': 'CryptoKittiesSiringAuction',
+        'addr': '0xC7af99Fe5513eB6710e6D5f44F9989dA40F27F26',
+    }
+}
+
+def get_cats_contract(contract_type):
+    name = CAT_CONTRACTS[contract_type]['name']
+    address = CAT_CONTRACTS[contract_type]['addr']
+    cats_contract = web3.eth.contract(
+        address=address,
+        name=name,
+        abi=CATS_ABI,
+    )
+    return cats_contract
 
 class EthWallet():
     def __init__(self, key=None):
@@ -17,32 +41,60 @@ class EthWallet():
         self.raw_addr = utils.privtoaddr(private_key)
         self.acct_addr = utils.checksum_encode(raw_address)
         
-    def send_eth(self, address, amt):
-        """Sends `amt` ethereum to `address`.
+    def send_eth(self, address, amt, data=None):
+        """Sends `amt` ethereum to `address` with the `data`
+        field attached to it.
         
         If you do not have enough ethereum, raises 
         `InsufficientFundsException`.
         """
         pass
     
-    def list_kitty(self, kitty_id, amt):
+    
+    def list_sire(self, kitty_id, start_amt, end_amt, duration, **kwargs):
+        """Lists a cat to sire."""
+        pass
+    
+    
+    def cancel_sire(self, kitty_id, **kwargs):
+        """Cancels a siring listing."""
+        pass
+    
+    
+    def purchase_sire(self, kitty_id, sire_id, **kwargs):
+        """Makes your cat fuck the other cat."""
+        pass
+    
+    
+    def list_kitty(self, kitty_id, start_amt, end_amt, duration, **kwargs):
         """Lists the cat with id `kitty_id` for sale on the
         exchange for `amt`.
         
         If you do not own the cat with that id, raises
         `KittyNotOwnedException`.
         """
-        pass
+        cats_contract = get_cats_contract('core')
+        
+        
+    def cancel_list(self, kitty_id, **kwargs):
+        """Cancels the listing for the cat."""
+        cats_contract = get_cats_contract('sale')
+        contract_args = kwargs
+        cats_contract.transact(contract_args).cancelAuction(kitty_id)
+        
     
-    def buy_kitty(self, kitty_id):
-        """Tries to purchase the cat with id `kitty_id`.
+    def buy_kitty(self, kitty_id, amt, **kwargs):
+        """Tries to purchase the cat with id `kitty_id` by
+        sending `amt` ether to the CryptoKittiesSaleAuction
+        contract address.
         
         If you do not have enough ethereum, raises
         `InsufficientFundsException`.
-        If the cat you are attempting to purchase is not on sale,
-        raises `KittyNotListedException`.
         """
-        pass
+        cats_contract = get_cats_contract('sale')
+        contract_args = kwargs
+        contract_args.update({'value': web3.toWei(amt, 'ether')})
+        cats_contract.transact(contract_args).bid(kitty_id)
 
 
 def generate_key():
