@@ -46,6 +46,7 @@ class CatWallet():
         self.addr = addr
         self.key = key
         
+        
     def send_eth(self, address, amt, data=None, **kwargs):
         """Sends `amt` ethereum to `address` with the `data`
         field attached to it.
@@ -60,6 +61,7 @@ class CatWallet():
         """Lists a cat to sire."""
         cats_contract = get_cats_contract('core')
         contract_args = kwargs
+        contract_args.update({'from': self.addr})
         return cats_contract.transact(contract_args).createSiringAuction(
             kitty_id,
             web3.toWei(start_amt, 'ether'),
@@ -72,6 +74,7 @@ class CatWallet():
         """Cancels a siring listing."""
         cats_contract = get_cats_contract('sire')
         contract_args = kwargs
+        contract_args.update({'from': self.addr})
         return cats_contract.transact(contract_args).cancelAuction(kitty_id)
     
     
@@ -84,6 +87,7 @@ class CatWallet():
         """Makes your kitty give birth."""
         cats_contract = get_cats_contract('core')
         contract_args = kwargs
+        contract_args.update({'from': self.addr})
         contract_args.update('value': web3.toWei(amt, 'ether'))
         return cats_contract.transact(contract_args).giveBirth(
             kitty_id,
@@ -99,6 +103,7 @@ class CatWallet():
         """
         cats_contract = get_cats_contract('core')
         contract_args = kwargs
+        contract_args.update({'from': self.addr})
         return cats_contract.transact(contract_args).createSaleAuction(
             kitty_id,
             web3.toWei(start_amt, 'ether'),
@@ -111,6 +116,7 @@ class CatWallet():
         """Cancels the listing for the cat."""
         cats_contract = get_cats_contract('sale')
         contract_args = kwargs
+        contract_args.update({'from': self.addr})
         return cats_contract.transact(contract_args).cancelAuction(kitty_id)
         
     
@@ -124,5 +130,6 @@ class CatWallet():
         """
         cats_contract = get_cats_contract('sale')
         contract_args = kwargs
+        contract_args.update({'from': self.addr})
         contract_args.update({'value': web3.toWei(amt, 'ether')})
         return cats_contract.transact(contract_args).bid(kitty_id)
